@@ -8,42 +8,54 @@ GAME RULES:
 - The first player to reach 100 points on GLOBAL score wins the game
 
 */
-  var score, roundScore, activePlayer;
+  var score, roundScore, activePlayer,count6;
 
 init();
 
 
 //Envent Listener for ROLLING THE DICE
 //(roll dice button):
-document.querySelector('.btn-roll').addEventListener('click', function(){
+      document.querySelector('.btn-roll').addEventListener('click', function(){
       //create a random number
-      var dice = Math.floor(Math.random()*6) + 1;
+      var dice1 = Math.floor(Math.random()*6) + 1;
+      var dice2 = Math.floor(Math.random()*6) + 1;
       //display the result in the Dice
-      var diceDOM = document.querySelector('.dice');
-      diceDOM.style.display = 'block';
-      diceDOM.src = 'dice-' + dice + '.png';
+      var diceDOM1 = document.querySelector('.dice-1');
+      var diceDOM2 = document.querySelector('.dice-2');
+      diceDOM1.style.display = 'block';
+      diceDOM1.src = 'dice-' + dice1 + '.png';
+      diceDOM2.style.display = 'block';
+      diceDOM2.src = 'dice-' + dice2 + '.png';
       //Update the round Score if the rolled number was not a 1
-      if (dice !== 1) {
+      if (dice1 !== 1 && dice2 !==1) {
         //add it to round score
-        roundScore += dice;
+        roundScore += (dice1 + dice2);
         document.querySelector('#current-' + activePlayer).textContent = roundScore;
+        if (dice1 === 6 || dice2 === 6){
+          count6 +=1;
+          if (count6 === 2){
+            document.querySelector('#score-' + activePlayer).textContent = '0';
+            score[activePlayer] = 0;
+            nextPlayer();
+          }
+        }
       }else{
         //next active player, round score 0
         nextPlayer();
       }
-});
+      });
 
 
 
 //Evenet Listener to ADD currentScore to Global Score
 //HOLD button:
-document.querySelector('.btn-hold').addEventListener('click', function(){
+      document.querySelector('.btn-hold').addEventListener('click', function(){
       // Add current score to global Score
         score[activePlayer] += roundScore;
       //update the user interface
       document.querySelector('#score-' + activePlayer).textContent = score[activePlayer];
       //check if player won the game
-      if (score[activePlayer] >= 20) {
+      if (score[activePlayer] >= document.getElementById('set-score').value) {
         document.querySelector('.btn-roll').style.display = 'none';
         document.querySelector('.btn-hold').style.display = 'none';
         document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
@@ -57,20 +69,22 @@ document.querySelector('.btn-hold').addEventListener('click', function(){
 
 //Event Listener for NEW GAME
 //New game button
-document.querySelector('.btn-new').addEventListener('click', init);
+      document.querySelector('.btn-new').addEventListener('click', init);
 
 
 
 
 //Function NEXT Player
-function nextPlayer(){
+    function nextPlayer(){
+    count6 = 0;
     //next player
     activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
     roundScore = 0;
     document.querySelector('#current-0').textContent = 0;
     document.querySelector('#current-1').textContent = 0;
     //hide the dice
-    document.querySelector('.dice').style.display = 'none';
+    document.querySelector('.dice-1').style.display = 'none';
+    document.querySelector('.dice-2').style.display = 'none';
     //next player active
     document.querySelector('.player-0-panel').classList.toggle('active');
     document.querySelector('.player-1-panel').classList.toggle('active');
@@ -79,17 +93,19 @@ function nextPlayer(){
 
 
 //Function for INITIAL state of the GAME
-function init() {
+    function init() {
     score = [0,0];
     roundScore = 0;
     activePlayer = 0;
+    count6 = 0;
     document.getElementById('score-0').textContent = '0';
     document.getElementById('score-1').textContent = '0';
     document.getElementById('current-0').textContent = '0';
     document.getElementById('current-1').textContent = '0';
     document.getElementById('name-0').textContent = 'Player 1';
     document.getElementById('name-1').textContent = 'Player 2';
-    document.querySelector('.dice').style.display = 'none';
+    document.querySelector('.dice-1').style.display = 'none';
+    document.querySelector('.dice-2').style.display = 'none';
     document.querySelector('.btn-roll').style.display = 'block';
     document.querySelector('.btn-hold').style.display = 'block';
     document.querySelector('.player-0-panel').classList.remove('active');
